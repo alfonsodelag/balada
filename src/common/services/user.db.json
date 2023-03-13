@@ -1,0 +1,10 @@
+{
+  "usersList": [
+    { "user": "test01@test.com", "passwd": "123456789", "name": "Don Gregorio" },
+    { "user": "test02@test.com", "passwd": "987654321", "name": "Don Pepito" }
+  ],
+  "tokens": [
+    "ee8d8f32-0199-4ea8-b6e6-16a28688c740",
+    "07b65fc9-3f33-4fe6-839c-12d2cd91fba5"
+  ]
+}
