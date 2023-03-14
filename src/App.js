@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import Artists from './pages/Artists/Artists';
 import Login from './pages/Login/Login';
-import Profile from './pages/Profile/Profile';
+import Songs from './pages/Songs/Songs';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,8 +23,8 @@ function App() {
         <>
           <Navigation handleLoginStatus={setIsLoggedIn} />
           <Routes>
-            <Route path="*" element={<Artists />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/" element={<Artists />} />
+            <Route path="/songs" element={<Songs />} />
           </Routes>
         </>
       )}
