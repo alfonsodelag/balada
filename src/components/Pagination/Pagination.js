@@ -1,10 +1,8 @@
-// @ts-nocheck
 import React from 'react';
 import PropTypes from 'prop-types';
 
 const Pagination = ({ currentPage, onPageChange, totalPages }) => {
   const pageNumbers = [];
-
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }

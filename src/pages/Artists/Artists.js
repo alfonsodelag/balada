@@ -9,15 +9,32 @@ const Artists = () => {
   const [artists, setArtists] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalPages, setTotalPages] = useState(0);
+  const [filteredArtists, setFilteredArtists] = useState([]);
 
   useEffect(() => {
+    console.log('useEffect: loadArtists triggered');
     loadArtists();
-  }, [currentPage, itemsPerPage, searchQuery]);
+  }, [itemsPerPage, currentPage]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.length > 0) {
+        const filtered = artists.filter((a) =>
+          a.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+        setFilteredArtists(filtered);
+      } else {
+        setFilteredArtists(artists);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, artists]);
 
   const loadArtists = () => {
     SongService.listaArtistas(
       currentPage,
-      itemsPerPage,
+      itemsPerPage, // use updated itemsPerPage state
       (artist) => artist.includes(searchQuery),
       (a, b) => a.localeCompare(b),
     )
@@ -30,23 +47,20 @@ const Artists = () => {
       });
   };
 
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchQuery(value);
+  };
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(Number(event.target.value));
-    setCurrentPage(1);
+    const value = Number(event.target.value);
+    console.log('handleItemsPerPageChange: ', value);
+    setItemsPerPage(value);
   };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    setCurrentPage(1);
-  };
-
-  const filteredArtists = artists.filter((artist) =>
-    artist.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   return (
     <div>
