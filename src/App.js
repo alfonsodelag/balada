@@ -1,35 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation/Navigation';
-import Artists from './pages/Artists/Artists';
-import Login from './pages/Login/Login';
-import Songs from './pages/Songs/Songs';
+import SongService from './common/services/song.service';
+import ArtistList from './components/ArtistList/ArtistList';
+import Pagination from './components/Pagination/Pagination';
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Artists = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [artists, setArtists] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalPages, setTotalPages] = useState(0);
+  const [filteredArtists, setFilteredArtists] = useState([]);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
-      setIsLoggedIn(true);
-    }
-  }, [isLoggedIn]);
+    loadArtists();
+  }, [itemsPerPage, currentPage]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.length > 0) {
+        const filtered = artists.filter((a) =>
+          a.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+        setFilteredArtists(filtered);
+      } else {
+        setFilteredArtists(artists);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, artists]);
+
+  const loadArtists = () => {
+    SongService.listaArtistas(
+      currentPage,
+      itemsPerPage, // use updated itemsPerPage state
+      (artist) => artist.includes(searchQuery),
+      (a, b) => a.localeCompare(b),
+    )
+      .then(({ artistas, nPages }) => {
+        setArtists(artistas);
+        setTotalPages(nPages);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchQuery(value);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (event) => {
+    const value = Number(event.target.value);
+    console.log('handleItemsPerPageChange: ', value);
+    setItemsPerPage(value);
+  };
 
   return (
-    <>
-      {!isLoggedIn ? (
-        <Login handleLoginStatus={setIsLoggedIn} />
-      ) : (
-        <>
-          <Navigation handleLoginStatus={setIsLoggedIn} />
-          <Routes>
-            <Route path="/" element={<Artists />} />
-            <Route path="/songs" element={<Songs />} />
-          </Routes>
-        </>
-      )}
-    </>
+    <div>
+      <h2 className="text-center text-3xl">List of Artists</h2>
+      <div className="flex m-auto flex-col">
+        <ArtistList
+          artists={filteredArtists}
+          searchQuery={searchQuery}
+          itemsPerPage={itemsPerPage}
+          handleSearchChange={handleSearchChange}
+          handleItemsPerPageChange={handleItemsPerPageChange}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+        <Pagination
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+        />
+      </div>
+    </div>
   );
-}
+};
 
-export default App;
+export default Artists;
