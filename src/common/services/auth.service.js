@@ -12,8 +12,8 @@ const AuthServicePriv = {
    * Pseudobackend que valida los datos enviados por el cliente
    * @typedef {'token'|'user'} LoginType
    * @typedef {{ user: string, name: string }} UserLogged
-   * @param {LoginType} type 
-   * @param {{ user: string, pass: string }} userData 
+   * @param {LoginType} type
+   * @param {{ user: string, pass: string }} userData
    */
   autentica: (type, userData) => {
     const { user: username, pass } = userData;
@@ -25,14 +25,17 @@ const AuthServicePriv = {
         autenticat = { user: 'invitado@test.com', name: 'Invitado' };
     } else {
       // Validamos credenciales contra la "DB"
-      if (usersIdx.includes(username) && users[username].passwd === userData.pass) {
+      if (
+        usersIdx.includes(username) &&
+        users[username].passwd === userData.pass
+      ) {
         const { user, name } = users[username];
         autenticat = { user, name };
       }
     }
 
     return autenticat;
-  }
+  },
 };
 
 /**
@@ -41,7 +44,6 @@ const AuthServicePriv = {
  * @class
  */
 const AuthService = {
-
   /**
    * Metodo que loguea el cliente a través de usuario y contraseña
    * @method
@@ -51,14 +53,15 @@ const AuthService = {
    */
   loginUser: (username, password) => {
     return new Promise((resolve, reject) => {
-      const time = (Math.random() * 1000) + 1000;
-      const user = AuthServicePriv.autentica('user', { user: username, pass: password });
+      const time = Math.random() * 1000 + 1000;
+      const user = AuthServicePriv.autentica('user', {
+        user: username,
+        pass: password,
+      });
 
       setTimeout(() => {
-        if (user)
-          resolve({ status: 200, message: 'Login OK!', data: user });
-        else
-          reject({ status: 401, message: 'Login KO!', data: undefined });
+        if (user) resolve({ status: 200, message: 'Login OK!', data: user });
+        else reject({ status: 401, message: 'Login KO!', data: undefined });
       }, time);
     });
   },
@@ -69,16 +72,17 @@ const AuthService = {
    * @param {string} token
    * @returns {Promise<{ status: number, message: string, data: UserLogged|undefined }>}
    */
-  loginToken: token => {
+  loginToken: (token) => {
     return new Promise((resolve, reject) => {
-      const time = (Math.random() * 1000) + 1000;
-      const user = AuthServicePriv.autentica('token', { user: undefined, pass: token });
+      const time = Math.random() * 1000 + 1000;
+      const user = AuthServicePriv.autentica('token', {
+        user: undefined,
+        pass: token,
+      });
 
       setTimeout(() => {
-        if (user)
-          resolve({ status: 200, message: 'Login OK!', data: user });
-        else
-          reject({ status: 401, message: 'Login KO!', data: undefined });
+        if (user) resolve({ status: 200, message: 'Login OK!', data: user });
+        else reject({ status: 401, message: 'Login KO!', data: undefined });
       }, time);
     });
   },
