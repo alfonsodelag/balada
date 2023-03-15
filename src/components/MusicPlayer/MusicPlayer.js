@@ -22,9 +22,11 @@ const MusicPlayer = ({ song }) => {
     });
 
     return () => {
-      audioRef.current.removeEventListener('loadedmetadata', () => {});
-      audioRef.current.removeEventListener('timeupdate', () => {});
-      audioRef.current.removeEventListener('ended', () => {});
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('loadedmetadata', () => {});
+        audioRef.current.removeEventListener('timeupdate', () => {});
+        audioRef.current.removeEventListener('ended', () => {});
+      }
     };
   }, []);
 
@@ -44,15 +46,18 @@ const MusicPlayer = ({ song }) => {
   };
 
   const handleSeek = (e) => {
-    audioRef.current.currentTime = e.target.value;
-    setCurrentTime(audioRef.current.currentTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = e.target.value;
+      setCurrentTime(audioRef.current.currentTime);
+    }
   };
 
   const handleVolumeChange = (e) => {
-    audioRef.current.volume = e.target.value;
-    setVolume(audioRef.current.volume);
+    if (audioRef.current) {
+      audioRef.current.volume = e.target.value;
+      setVolume(audioRef.current.volume);
+    }
   };
-
   return (
     <div
       onClick={togglePlay}

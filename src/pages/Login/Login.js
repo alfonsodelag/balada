@@ -11,7 +11,7 @@ const Login = ({ handleLoginStatus }) => {
   };
 
   return (
-    <div className="rounded-md p-4 shadow-md flex flex-col w-full md:w-1/4 m-auto">
+    <div className="rounded-md p-4 shadow-md flex flex-col w-full md:w-1/4 m-auto mt-28 bg-white">
       <h2 className="text-center">Login</h2>
       {isGuest ? (
         <GuestLoginForm handleLoginStatus={handleLoginStatus} />

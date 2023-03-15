@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { SongContext } from '../../common/context/SongContext';
 
 const ArtistList = ({
-  artists,
+  filteredArtists,
   searchQuery,
   itemsPerPage,
   handleSearchChange,
@@ -42,7 +42,7 @@ const ArtistList = ({
           </tr>
         </thead>
         <tbody>
-          {artists.map((artist) => (
+          {filteredArtists.map((artist) => (
             <tr
               key={artist.name}
               className="hover:bg-gray-100 border-b-2 border-gray-200"
@@ -67,7 +67,7 @@ const ArtistList = ({
 };
 
 ArtistList.propTypes = {
-  artists: PropTypes.arrayOf(
+  filteredArtists: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       n_songs: PropTypes.number.isRequired,
