@@ -10,35 +10,48 @@ const ArtistList = ({
   handleItemsPerPageChange,
 }) => {
   return (
-    <div className="m-auto">
-      <h1>Artists</h1>
-      <input
-        type="text"
-        placeholder="Search artist"
-        value={searchQuery}
-        onChange={handleSearchChange}
-      />
-      <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-        <option value="10">10 per page</option>
-        <option value="20">20 per page</option>
-        <option value="30">30 per page</option>
-      </select>
-      <table>
+    <div>
+      <div className="px-4">
+        <h1 className="text-xl font-bold mb-4">Artists</h1>
+        <input
+          type="text"
+          placeholder="Search artist"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className="border border-gray-400 rounded px-2 py-1 mb-4 mr-4"
+        />
+        <select
+          value={itemsPerPage}
+          onChange={handleItemsPerPageChange}
+          className="border border-gray-400 rounded px-2 py-1 mb-4"
+        >
+          <option value="10">10 per page</option>
+          <option value="20">20 per page</option>
+          <option value="30">30 per page</option>
+        </select>
+      </div>
+      <table className="table-auto w-11/12 mx-auto mt-10">
         <thead>
           <tr>
-            <th>Artist</th>
-            <th># Songs</th>
+            <th className="px-4 py-2 text-left">Artist</th>
+            <th className="px-4 py-2 text-right"># Songs</th>
           </tr>
         </thead>
         <tbody>
           {artists.map((artist) => (
-            <tr key={artist.name}>
-              <td>
-                <Link to={`/artists/${encodeURIComponent(artist.name)}/songs`}>
+            <tr
+              key={artist.name}
+              className="hover:bg-gray-100 border-b-2 border-gray-200"
+            >
+              <td className="px-4 py-3">
+                <Link
+                  to={`/artists/${encodeURIComponent(artist.name)}/songs`}
+                  className="text-blue-500"
+                >
                   {artist.name}
                 </Link>
               </td>
-              <td>{artist.n_songs}</td>
+              <td className="px-4 py-3 text-right">{artist.n_songs}</td>
             </tr>
           ))}
         </tbody>

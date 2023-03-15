@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SongService from './common/services/song.service';
 import ArtistList from './components/ArtistList/ArtistList';
 import Pagination from './components/Pagination/Pagination';
+import Spinner from './components/Spinner/Spinner';
 
 const Artists = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -10,6 +11,7 @@ const Artists = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalPages, setTotalPages] = useState(0);
   const [filteredArtists, setFilteredArtists] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadArtists();
@@ -31,6 +33,7 @@ const Artists = () => {
   }, [searchQuery, artists]);
 
   const loadArtists = () => {
+    setIsLoading(true);
     SongService.listaArtistas(
       currentPage,
       itemsPerPage, // use updated itemsPerPage state
@@ -43,6 +46,9 @@ const Artists = () => {
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -63,25 +69,31 @@ const Artists = () => {
 
   return (
     <div>
-      <h2 className="text-center text-3xl">List of Artists</h2>
+      <h2 className="text-center text-3xl my-4">List of Artists</h2>
       <div className="flex m-auto flex-col">
-        <ArtistList
-          artists={filteredArtists}
-          searchQuery={searchQuery}
-          itemsPerPage={itemsPerPage}
-          handleSearchChange={handleSearchChange}
-          handleItemsPerPageChange={handleItemsPerPageChange}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-        <Pagination
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          onItemsPerPageChange={handleItemsPerPageChange}
-        />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <ArtistList
+              artists={filteredArtists}
+              searchQuery={searchQuery}
+              itemsPerPage={itemsPerPage}
+              handleSearchChange={handleSearchChange}
+              handleItemsPerPageChange={handleItemsPerPageChange}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={handleItemsPerPageChange}
+            />
+          </>
+        )}
       </div>
     </div>
   );

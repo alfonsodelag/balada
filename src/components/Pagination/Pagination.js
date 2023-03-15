@@ -12,12 +12,14 @@ const Pagination = ({ currentPage, onPageChange, totalPages }) => {
   };
 
   return (
-    <ul className="flex justify-center">
+    <ul className="flex justify-around mt-20 w-7/12 mx-auto">
       {pageNumbers.map((pageNumber) => (
         <li
           key={pageNumber}
           className={`px-2 py-1 ${
-            pageNumber === currentPage ? 'bg-blue-500 text-white' : ''
+            pageNumber === currentPage
+              ? 'bg-blue-500 text-white rounded-lg '
+              : ''
           }`}
           onClick={() => handleClick(pageNumber)}
         >

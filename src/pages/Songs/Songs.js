@@ -1,43 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import SongService from '../../common/services/song.service';
+import React, { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import useSongList from '../../common/hooks/useSongList';
+import SongList from '../../components/SongList/SongList';
+import SongPagination from '../../components/SongPagination/SongPagination';
 
 const Songs = () => {
-  const [songs, setSongs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [artistTerm, setArtistTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const { artistName } = useParams();
+  const { search } = useLocation();
 
   useEffect(() => {
-    // Fetch the list of songs for the artist from the SongService
-    const fetchSongs = async () => {
-      try {
-        const response = await SongService.listaCanciones(
-          currentPage - 1,
-          itemsPerPage,
-          (song) => {
-            return song.group === artistName || artistName === undefined;
-          },
-        );
-        setSongs(response.canciones);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    const params = new URLSearchParams(search);
+    setSearchTerm(params.get('searchTerm') || '');
+    setArtistTerm(params.get('artistTerm') || '');
+  }, [search]);
 
-    fetchSongs();
-  }, [artistName, currentPage, itemsPerPage]);
+  const { songs, filteredSongs } = useSongList({
+    artistName,
+    currentPage,
+    itemsPerPage,
+    searchTerm,
+    artistTerm,
+  });
 
-  // Filter songs based on search and artist terms
-  const filteredSongs = songs.filter(
-    (song) =>
-      song.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      song.group.toLowerCase().includes(artistTerm.toLowerCase()),
-  );
-
-  console.log('filteredSongs!!', filteredSongs);
   // Paginate songs
   const indexOfLastSong = currentPage * itemsPerPage;
   const indexOfFirstSong = indexOfLastSong - itemsPerPage;
@@ -59,16 +47,10 @@ const Songs = () => {
     setCurrentPage(1);
   };
 
-  // Render paginated list of songs
-  const renderSongs = () => {
-    return (
-      <ul>
-        {currentSongs.map((song) => (
-          <li key={song.title}>{song.title}</li>
-        ))}
-      </ul>
-    );
-  };
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredSongs.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="p-4 bg-gray-100">
@@ -95,10 +77,21 @@ const Songs = () => {
         className="border border-gray-300 rounded-md py-2 px-3 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
       >
         <option value="10">10 per page</option>
+        <option value="15">15 per page</option>
         <option value="20">20 per page</option>
-        <option value="30">30 per page</option>
       </select>
-      {renderSongs()}
+      {songs.length > 0 && (
+        <h2 className="text-3xl font-bold my-2">
+          Artist: {currentSongs[0].group}
+        </h2>
+      )}
+      <SongList songs={currentSongs} />
+      <SongPagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        filteredSongs={filteredSongs}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 };
