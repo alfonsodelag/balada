@@ -53,10 +53,11 @@ const MusicPlayer = ({ song }) => {
     setVolume(audioRef.current.volume);
   };
 
-  console.log('song', song);
-
   return (
-    <div className="bg-white rounded-lg p-4 border-2 shadow-md my-4 w-full">
+    <div
+      onClick={togglePlay}
+      className="bg-white rounded-lg p-4 border-2 shadow-md my-4 w-full"
+    >
       <h2 className="text-xl font-semibold my-2">Song Title: {song.title}</h2>
       <h2 className="text-xl font-semibold my-2">Song Album: {song.album}</h2>
       <h2 className="text-xl font-semibold my-2">
@@ -118,16 +119,14 @@ const formatTime = (timeInSeconds) => {
 };
 
 MusicPlayer.propTypes = {
-  song: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      artist: PropTypes.string.isRequired,
-      album: PropTypes.string.isRequired,
-      duration: PropTypes.number.isRequired,
-      score: PropTypes.number,
-      url: PropTypes.string.isRequired,
-    }).isRequired,
-  ).isRequired,
+  song: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    group: PropTypes.string.isRequired,
+    album: PropTypes.string.isRequired,
+    duration: PropTypes.number.isRequired,
+    rating: PropTypes.number,
+    src: PropTypes.string.isRequired,
+  }).isRequired,
   initialVolume: PropTypes.number,
 };
 

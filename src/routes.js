@@ -7,6 +7,7 @@ import App from './App';
 
 export const RouterApp = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [artistTerm, setArtistTerm] = useState('');
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -25,7 +26,15 @@ export const RouterApp = () => {
             <Navigation handleLoginStatus={setIsLoggedIn} />
             <Routes>
               <Route path="/" element={<App />} />
-              <Route path="/artists/:artistName/songs" element={<Songs />} />
+              <Route
+                path="/artists/:artistName/songs/*"
+                element={
+                  <Songs
+                    artistTerm={artistTerm}
+                    setArtistTerm={setArtistTerm}
+                  />
+                }
+              />
             </Routes>
           </>
         )}

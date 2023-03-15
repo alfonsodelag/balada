@@ -1,6 +1,8 @@
-import React from 'react';
+// @ts-ignore
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { SongContext } from '../../common/context/SongContext';
 
 const ArtistList = ({
   artists,
@@ -9,6 +11,8 @@ const ArtistList = ({
   handleSearchChange,
   handleItemsPerPageChange,
 }) => {
+  const { songName } = useContext(SongContext);
+
   return (
     <div>
       <div className="px-4">
@@ -45,7 +49,9 @@ const ArtistList = ({
             >
               <td className="px-4 py-3">
                 <Link
-                  to={`/artists/${encodeURIComponent(artist.name)}/songs`}
+                  to={`/artists/${encodeURIComponent(
+                    artist.name,
+                  )}/songs/${encodeURIComponent(songName)}`}
                   className="text-blue-500"
                 >
                   {artist.name}

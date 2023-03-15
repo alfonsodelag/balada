@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import useSongList from '../../common/hooks/useSongList';
 import SongList from '../../components/SongList/SongList';
 import SongPagination from '../../components/SongPagination/SongPagination';
+import PropTypes from 'prop-types';
 
-const Songs = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [artistTerm, setArtistTerm] = useState('');
+const Songs = ({ artistTerm, setArtistTerm }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
   const { artistName } = useParams();
-  const { search } = useLocation();
-
-  useEffect(() => {
-    const params = new URLSearchParams(search);
-    setSearchTerm(params.get('searchTerm') || '');
-    setArtistTerm(params.get('artistTerm') || '');
-  }, [search]);
+  const navigate = useNavigate();
 
   const { songs, filteredSongs } = useSongList({
     artistName,
@@ -33,12 +27,25 @@ const Songs = () => {
 
   // Handle search input change
   const handleSearchTermChange = (event) => {
-    setSearchTerm(event.target.value);
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    navigate(
+      `/artists/${encodeURIComponent(artistName)}/songs/${encodeURIComponent(
+        newSearchTerm,
+      )}`,
+    );
   };
 
   // Handle artist input change
   const handleArtistTermChange = (event) => {
-    setArtistTerm(event.target.value);
+    const newArtistTerm = event.target.value;
+    setArtistTerm(newArtistTerm);
+    if (newArtistTerm !== '') {
+      setArtistTerm(newArtistTerm);
+      navigate(`/artists/${newArtistTerm}/songs`);
+    } else {
+      navigate(`/artists/${artistTerm}/songs`);
+    }
   };
 
   // Handle items per page change
@@ -58,7 +65,7 @@ const Songs = () => {
       <div className="flex space-x-4 mb-4">
         <input
           type="text"
-          placeholder="Search by name"
+          placeholder="Search by song name"
           className="border border-gray-300 rounded-md py-2 px-3 w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           value={searchTerm}
           onChange={handleSearchTermChange}
@@ -80,11 +87,17 @@ const Songs = () => {
         <option value="15">15 per page</option>
         <option value="20">20 per page</option>
       </select>
-      {songs.length > 0 && (
+      {songs.length > 0 && currentSongs.length > 0 && (
         <h2 className="text-3xl font-bold my-2">
           Artist: {currentSongs[0].group}
         </h2>
       )}
+      {songs.length > 0 && currentSongs.length === 0 && (
+        <h2 className="text-3xl font-bold my-2">
+          No songs found for {searchTerm}
+        </h2>
+      )}
+
       <SongList songs={currentSongs} />
       <SongPagination
         currentPage={currentPage}
@@ -94,6 +107,11 @@ const Songs = () => {
       />
     </div>
   );
+};
+
+Songs.propTypes = {
+  artistTerm: PropTypes.string.isRequired,
+  setArtistTerm: PropTypes.func.isRequired,
 };
 
 export default Songs;

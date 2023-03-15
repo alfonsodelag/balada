@@ -34,7 +34,6 @@ const Pagination = ({ currentPage, onPageChange, totalPages }) => {
 
 Pagination.propTypes = {
   currentPage: PropTypes.number.isRequired,
-  totalItems: PropTypes.number.isRequired,
   itemsPerPage: PropTypes.number.isRequired,
   totalPages: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { SongContext } from './common/context/SongContext';
 import SongService from './common/services/song.service';
 import ArtistList from './components/ArtistList/ArtistList';
 import Pagination from './components/Pagination/Pagination';
 import Spinner from './components/Spinner/Spinner';
 
-const Artists = () => {
+const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [artists, setArtists] = useState([]);
@@ -12,6 +13,9 @@ const Artists = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [filteredArtists, setFilteredArtists] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { artistTerm, setArtistTerm, songName, setSongName } =
+    useContext(SongContext);
 
   useEffect(() => {
     loadArtists();
@@ -36,7 +40,7 @@ const Artists = () => {
     setIsLoading(true);
     SongService.listaArtistas(
       currentPage,
-      itemsPerPage, // use updated itemsPerPage state
+      itemsPerPage,
       (artist) => artist.includes(searchQuery),
       (a, b) => a.localeCompare(b),
     )
@@ -63,40 +67,43 @@ const Artists = () => {
 
   const handleItemsPerPageChange = (event) => {
     const value = Number(event.target.value);
-    console.log('handleItemsPerPageChange: ', value);
     setItemsPerPage(value);
   };
 
   return (
-    <div>
-      <h2 className="text-center text-3xl my-4">List of Artists</h2>
-      <div className="flex m-auto flex-col">
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <>
-            <ArtistList
-              artists={filteredArtists}
-              searchQuery={searchQuery}
-              itemsPerPage={itemsPerPage}
-              handleSearchChange={handleSearchChange}
-              handleItemsPerPageChange={handleItemsPerPageChange}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-            <Pagination
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              onItemsPerPageChange={handleItemsPerPageChange}
-            />
-          </>
-        )}
+    <SongContext.Provider
+      value={{ artistTerm, setArtistTerm, songName, setSongName }}
+    >
+      <div>
+        <h2 className="text-center text-3xl my-4">List of Artists</h2>
+        <div className="flex m-auto flex-col">
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              <ArtistList
+                artists={filteredArtists}
+                searchQuery={searchQuery}
+                itemsPerPage={itemsPerPage}
+                handleSearchChange={handleSearchChange}
+                handleItemsPerPageChange={handleItemsPerPageChange}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+              <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+              />
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </SongContext.Provider>
   );
 };
 
-export default Artists;
+export default App;

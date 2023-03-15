@@ -1,12 +1,13 @@
 import React from 'react';
 import MusicPlayer from '../MusicPlayer/MusicPlayer';
 import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid';
 
 const SongList = ({ songs }) => {
   return (
     <>
       {songs.map((song) => (
-        <MusicPlayer key={song.title} song={song} />
+        <MusicPlayer key={uuidv4()} song={song} />
       ))}
     </>
   );
